@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -e
+
+usage() {
+  echo "Usage: gh notes <repo> <date>"
+}
+
+if [ $# -lt 2 ]; then
+  usage >&2
+  exit 1
+fi
+
+repo="$1"
+date="$2"
+
+gh api -H 'accept: application/vnd.github.v3+json' "repos/$repo/releases" | jq --arg date "$date" -r '.[] | select(.published_at | startswith($date)) | .body'
